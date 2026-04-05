@@ -2,6 +2,7 @@ import React, { useEffect, useState, useCallback } from 'react';
 import {
   View, Text, FlatList, TouchableOpacity,
   StyleSheet, StatusBar,
+  TextInput,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useFocusEffect } from '@react-navigation/native';
@@ -12,6 +13,7 @@ import { CatalogCard } from '../components/CatalogCard';
 import { FilterTabs } from '../components/FilterTabs';
 import { MediaItem, StatusType } from '../types';
 import { colors } from '../theme/colors';
+import { SortModal, SortOption } from '../components/SortModal';
 
 type RootStackParamList = {
   Home: undefined;
@@ -26,6 +28,9 @@ type Props = {
 export function HomeScreen({ navigation }: Props) {
   const [items, setItems] = useState<MediaItem[]>([]);
   const [filter, setFilter] = useState<StatusType | 'all'>('all');
+  const [sort, setSort] = useState<SortOption>('recent');
+  const [showSort, setShowSort] = useState(false);
+  const [search, setSearch] = useState('');
 
   useFocusEffect(
     useCallback(() => {
@@ -33,16 +38,82 @@ export function HomeScreen({ navigation }: Props) {
     }, [])
   );
 
-  const filtered = filter === 'all' ? items : items.filter(i => i.status === filter);
+  const filtered = React.useMemo(() => {
+  let list = filter === 'all' ? items : items.filter(i => i.status === filter);
+   if (search.trim()) {
+    const q = search.trim().toLowerCase();
+    list = list.filter(i =>
+      i.title.toLowerCase().includes(q) ||
+      i.author?.toLowerCase().includes(q)
+    );
+  }
+
+  switch (sort) {
+    case 'name_asc':
+      list = [...list].sort((a, b) => a.title.localeCompare(b.title));
+      break;
+    case 'name_desc':
+      list = [...list].sort((a, b) => b.title.localeCompare(a.title));
+      break;
+    case 'progress_asc':
+      list = [...list].sort((a, b) => {
+        const totalA = a.totalEpisodes ?? a.totalVolumes ?? 0;
+        const currentA = a.currentEpisode ?? a.currentVolume ?? 0;
+        const totalB = b.totalEpisodes ?? b.totalVolumes ?? 0;
+        const currentB = b.currentEpisode ?? b.currentVolume ?? 0;
+        const pa = totalA > 0 ? currentA / totalA : 0;
+        const pb = totalB > 0 ? currentB / totalB : 0;
+        return pa - pb;
+      });
+      break;
+    case 'progress_desc':
+      list = [...list].sort((a, b) => {
+        const totalA = a.totalEpisodes ?? a.totalVolumes ?? 0;
+        const currentA = a.currentEpisode ?? a.currentVolume ?? 0;
+        const totalB = b.totalEpisodes ?? b.totalVolumes ?? 0;
+        const currentB = b.currentEpisode ?? b.currentVolume ?? 0;
+        const pa = totalA > 0 ? currentA / totalA : 0;
+        const pb = totalB > 0 ? currentB / totalB : 0;
+        return pb - pa;
+      });
+      break;
+    case 'rating':
+      list = [...list].sort((a, b) => (b.rating ?? 0) - (a.rating ?? 0));
+      break;
+    case 'recent':
+    default:
+      list = [...list].sort((a, b) => b.createdAt.localeCompare(a.createdAt));
+      break;
+  }
+
+  return list;
+}, [items, filter, sort, search]);
 
   return (
     <SafeAreaView style={styles.safe}>
       <StatusBar barStyle="light-content" backgroundColor={colors.bg} />
       <View style={styles.header}>
-        <Text style={styles.title}>My Catalog</Text>
-        <TouchableOpacity style={styles.iconBtn}>
-          <Ionicons name="options-outline" size={22} color={colors.textMuted} />
+        <Text style={styles.title}>LoreKeeper</Text>
+        <TouchableOpacity style={styles.iconBtn} onPress={() => setShowSort(true)}>
+          <Ionicons name="options-outline" size={22} color={showSort ? colors.pink : colors.textMuted} />
         </TouchableOpacity>
+      </View>
+
+      <View style={styles.searchContainer}>
+        <Ionicons name="search-outline" size={16} color={colors.textDim} style={styles.searchIcon} />
+        <TextInput
+          style={styles.searchInput}
+          value={search}
+          onChangeText={setSearch}
+          placeholder="Search..."
+          placeholderTextColor={colors.textDim}
+          autoCapitalize="none"
+        />
+        {search.length > 0 && (
+          <TouchableOpacity onPress={() => setSearch('')}>
+            <Ionicons name="close-circle" size={16} color={colors.textDim} />
+          </TouchableOpacity>
+        )}
       </View>
 
       <FilterTabs active={filter} onChange={setFilter} />
@@ -71,6 +142,13 @@ export function HomeScreen({ navigation }: Props) {
       >
         <Ionicons name="add" size={28} color={colors.white} />
       </TouchableOpacity>
+
+      <SortModal
+        visible={showSort}
+        current={sort}
+        onSelect={setSort}
+        onClose={() => setShowSort(false)}
+      />
     </SafeAreaView>
   );
 }
@@ -94,4 +172,12 @@ const styles = StyleSheet.create({
     alignItems: 'center', justifyContent: 'center',
     elevation: 6,
   },
+    searchContainer: {
+    flexDirection: 'row', alignItems: 'center',
+    backgroundColor: colors.bgCard, borderWidth: 1,
+    borderColor: colors.border, borderRadius: 10,
+    paddingHorizontal: 12, marginHorizontal: 20, marginBottom: 16, height: 40,
+  },
+  searchIcon: { marginRight: 8 },
+  searchInput: { flex: 1, fontSize: 14, color: colors.text },
 });
