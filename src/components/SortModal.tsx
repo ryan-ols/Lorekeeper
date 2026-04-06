@@ -9,12 +9,12 @@ import { colors } from '../theme/colors';
 export type SortOption = 'recent' | 'name_asc' | 'name_desc' | 'progress_asc' | 'progress_desc' | 'rating';
 
 const OPTIONS: { value: SortOption; label: string; icon: keyof typeof Ionicons.glyphMap }[] = [
-  { value: 'recent',        label: 'Recently added',    icon: 'time-outline' },
-  { value: 'name_asc',      label: 'Name (A → Z)',      icon: 'text-outline' },
-  { value: 'name_desc',     label: 'Name (Z → A)',      icon: 'text-outline' },
-  { value: 'progress_asc',  label: 'Progress (low)',    icon: 'trending-up-outline' },
-  { value: 'progress_desc', label: 'Progress (high)',   icon: 'trending-up-outline' },
-  { value: 'rating',        label: 'Best rated',        icon: 'star-outline' },
+  { value: 'recent',        label: 'Adicionado recentemente', icon: 'time-outline' },
+  { value: 'name_asc',      label: 'Nome (A → Z)',            icon: 'text-outline' },
+  { value: 'name_desc',     label: 'Nome (Z → A)',            icon: 'text-outline' },
+  { value: 'progress_asc',  label: 'Progresso (menor)',       icon: 'trending-up-outline' },
+  { value: 'progress_desc', label: 'Progresso (maior)',       icon: 'trending-up-outline' },
+  { value: 'rating',        label: 'Melhor avaliado',         icon: 'star-outline' },
 ];
 
 interface Props {
@@ -29,7 +29,7 @@ export function SortModal({ visible, current, onSelect, onClose }: Props) {
     <Modal visible={visible} transparent animationType="fade" onRequestClose={onClose}>
       <Pressable style={styles.overlay} onPress={onClose}>
         <Pressable style={styles.sheet}>
-          <Text style={styles.title}>Sort by</Text>
+          <Text style={styles.title}>Ordenar por</Text>
           {OPTIONS.map(opt => {
             const active = current === opt.value;
             return (

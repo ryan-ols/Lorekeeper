@@ -12,7 +12,7 @@ export function ProgressBar({ current = 0, total = 0 }: Props) {
 
   return (
     <View style={styles.wrapper}>
-      <Text style={styles.label}>Progress</Text>
+      <Text style={styles.label}>Progresso</Text>
       <View style={styles.row}>
         <View style={styles.track}>
           <View style={[styles.fill, { width: `${percent}%` }]} />

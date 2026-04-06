@@ -41,16 +41,32 @@ export function DetailScreen({ navigation, route }: Props) {
     setItem(found);
   }, [route.params.id]);
 
+    const TYPE_PT: Record<string, string> = {
+      book: 'Livro', series: 'Série', movie: 'Filme',
+      anime: 'Anime', manga: 'Mangá', game: 'Jogo',
+      lightnovel: 'Light Novel', other: 'Outro',
+    };
+
+    const STATUS_PT: Record<string, string> = {
+      watching: 'Assistindo', reading: 'Lendo', playing: 'Jogando',
+      completed: 'Concluído', paused: 'Pausado', dropped: 'Abandonado', plan: 'Planejado',
+    };
+
   if (!item) return null;
 
   const current = item.currentEpisode ?? item.currentVolume ?? 0;
   const total = item.totalEpisodes ?? item.totalVolumes ?? 0;
 
+  const getProgressLabel = () => {
+    if (item.type === 'manga') return 'capítulos';
+    if (item.totalEpisodes) return 'episódios';
+    return 'volumes';
+  };
+
   function handleDelete() {
-    Alert.alert('Delete', `Remove "${item!.title}"?`, [
-      { text: 'Cancel', style: 'cancel' },
-      {
-        text: 'Delete', style: 'destructive', onPress: () => {
+    Alert.alert('Excluir', `Remover "${item!.title}"?`, [
+      { text: 'Cancelar', style: 'cancel' },
+      { text: 'Excluir', style: 'destructive', onPress: () => {
           deleteMedia(item!.id);
           navigation.goBack();
         },
@@ -102,23 +118,23 @@ export function DetailScreen({ navigation, route }: Props) {
           <View style={styles.progressSection}>
             <ProgressBar current={current} total={total} />
             <Text style={styles.progressDetail}>
-              {current} / {total} {item.totalEpisodes ? 'episodes' : 'volumes'}
+              {`${current} / ${total} ${getProgressLabel()}`}
             </Text>
           </View>
         )}
 
         <View style={styles.section}>
-          <Row label="Type" value={item.type} />
-          <Row label="Status" value={item.status} />
-          <Row label="Platform" value={item.platform} />
-          <Row label="Season" value={item.season} />
-          <Row label="Started" value={item.startedAt} />
-          <Row label="Finished" value={item.finishedAt} />
+          <Row label="Tipo" value={TYPE_PT[item.type]} />
+          <Row label="Status" value={STATUS_PT[item.status]} />
+          <Row label="Plataforma" value={item.platform} />
+          <Row label="Temporada" value={item.season} />
+          <Row label="Iniciado em" value={item.startedAt} />
+          <Row label="Concluído em" value={item.finishedAt} />
         </View>
 
         {item.notes && (
           <View style={styles.notesSection}>
-            <Text style={styles.notesLabel}>Notes</Text>
+            <Text style={styles.notesLabel}>Notas</Text>
             <Text style={styles.notesText}>{item.notes}</Text>
           </View>
         )}

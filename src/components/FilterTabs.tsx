@@ -4,13 +4,13 @@ import { StatusType } from '../types';
 import { colors } from '../theme/colors';
 
 const TABS: { label: string; value: StatusType | 'all' }[] = [
-  { label: 'All', value: 'all' },
-  { label: 'Reading', value: 'reading' },
-  { label: 'Watching', value: 'watching' },
-  { label: 'Completed', value: 'completed' },
-  { label: 'Paused', value: 'paused' },
-  { label: 'Dropped', value: 'dropped' },
-  { label: 'Plan', value: 'plan' },
+  { label: 'Todos', value: 'all' },
+  { label: 'Lendo', value: 'reading' },
+  { label: 'Assistindo', value: 'watching' },
+  { label: 'Concluído', value: 'completed' },
+  { label: 'Pausado', value: 'paused' },
+  { label: 'Abandonado', value: 'dropped' },
+  { label: 'Planejado', value: 'plan' },
 ];
 
 interface Props {
@@ -20,7 +20,12 @@ interface Props {
 
 export function FilterTabs({ active, onChange }: Props) {
   return (
-    <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.scroll} contentContainerStyle={styles.container}>
+    <ScrollView
+      horizontal
+      showsHorizontalScrollIndicator={false}
+      style={styles.scroll}
+      contentContainerStyle={[styles.container]}
+    >
       {TABS.map(tab => {
         const isActive = active === tab.value;
         return (
@@ -47,7 +52,7 @@ const styles = StyleSheet.create({
   backgroundColor: colors.bgCard,
   borderWidth: 1,
   borderColor: colors.border,
-  alignSelf: 'flex-start', 
+  alignSelf: 'center',
 },
   tabActive: {
     backgroundColor: colors.pink,

@@ -4,7 +4,7 @@ import {
   StyleSheet, StatusBar,
   TextInput,
 } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useFocusEffect } from '@react-navigation/native';
 import { Ionicons } from '@expo/vector-icons';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
@@ -31,6 +31,7 @@ export function HomeScreen({ navigation }: Props) {
   const [sort, setSort] = useState<SortOption>('recent');
   const [showSort, setShowSort] = useState(false);
   const [search, setSearch] = useState('');
+  const insets = useSafeAreaInsets();
 
   useFocusEffect(
     useCallback(() => {
@@ -105,7 +106,7 @@ export function HomeScreen({ navigation }: Props) {
           style={styles.searchInput}
           value={search}
           onChangeText={setSearch}
-          placeholder="Search..."
+          placeholder="Buscar..."
           placeholderTextColor={colors.textDim}
           autoCapitalize="none"
         />
@@ -116,7 +117,9 @@ export function HomeScreen({ navigation }: Props) {
         )}
       </View>
 
-      <FilterTabs active={filter} onChange={setFilter} />
+      <View style={{ height: 50 }}>
+        <FilterTabs active={filter} onChange={setFilter} />
+      </View>
 
       <FlatList
         data={filtered}
@@ -131,13 +134,13 @@ export function HomeScreen({ navigation }: Props) {
         showsVerticalScrollIndicator={false}
         ListEmptyComponent={
           <View style={styles.empty}>
-            <Text style={styles.emptyText}>Nothing here yet.</Text>
+            <Text style={styles.emptyText}>Nada por aqui ainda.</Text>
           </View>
         }
       />
 
       <TouchableOpacity
-        style={styles.fab}
+        style={[styles.fab, { bottom: 16 + insets.bottom }]}
         onPress={() => navigation.navigate('Form', {})}
       >
         <Ionicons name="add" size={28} color={colors.white} />
@@ -166,7 +169,7 @@ const styles = StyleSheet.create({
   empty: { alignItems: 'center', marginTop: 80 },
   emptyText: { color: colors.textDim, fontSize: 14 },
   fab: {
-    position: 'absolute', bottom: 28, right: 24,
+    position: 'absolute', right: 24,
     width: 56, height: 56, borderRadius: 28,
     backgroundColor: colors.pink,
     alignItems: 'center', justifyContent: 'center',
