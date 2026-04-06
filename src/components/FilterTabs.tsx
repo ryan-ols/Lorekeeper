@@ -4,13 +4,13 @@ import { StatusType } from '../types';
 import { colors } from '../theme/colors';
 
 const TABS: { label: string; value: StatusType | 'all' }[] = [
-  { label: 'Todos', value: 'all' },
-  { label: 'Lendo', value: 'reading' },
-  { label: 'Assistindo', value: 'watching' },
-  { label: 'Concluído', value: 'completed' },
-  { label: 'Pausado', value: 'paused' },
-  { label: 'Abandonado', value: 'dropped' },
-  { label: 'Planejado', value: 'plan' },
+  { label: 'All', value: 'all' },
+  { label: 'Reading', value: 'reading' },
+  { label: 'Watching', value: 'watching' },
+  { label: 'Completed', value: 'completed' },
+  { label: 'Paused', value: 'paused' },
+  { label: 'Dropped', value: 'dropped' },
+  { label: 'Planned', value: 'plan' },
 ];
 
 interface Props {

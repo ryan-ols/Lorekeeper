@@ -26,14 +26,14 @@ const TYPES: MediaType[] = ['book', 'series', 'movie', 'anime', 'manga', 'lightn
 const STATUSES: StatusType[] = ['watching', 'reading', 'playing', 'completed', 'paused', 'dropped', 'plan'];
 
 const TYPE_LABELS: Record<MediaType, string> = {
-  book: 'Livro', series: 'Série', movie: 'Filme',
-  anime: 'Anime', manga: 'Mangá', game: 'Jogo',
-  lightnovel: 'Light Novel', other: 'Outro',
+  book: 'Book', series: 'Series', movie: 'Movie',
+  anime: 'Anime', manga: 'Manga', game: 'Game',
+  lightnovel: 'Light Novel', other: 'Other',
 };
 
 const STATUS_LABELS: Record<StatusType, string> = {
-  watching: 'Assistindo', reading: 'Lendo', playing: 'Jogando',
-  completed: 'Concluído', paused: 'Pausado', dropped: 'Abandonado', plan: 'Planejado',
+  watching: 'Watching', reading: 'Reading', playing: 'Playing',
+  completed: 'Completed', paused: 'Paused', dropped: 'Dropped', plan: 'Planned',
 };
 
 function SectionTitle({ label }: { label: string }) {
@@ -155,7 +155,7 @@ export function FormScreen({ navigation, route }: Props) {
 
   function handleSave() {
     if (!title.trim()) {
-      Alert.alert('Obrigatório', 'O título é obrigatório.');
+      Alert.alert('Required', 'Title is required.');
       return;
     }
 
@@ -203,9 +203,9 @@ export function FormScreen({ navigation, route }: Props) {
         <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backBtn}>
           <Ionicons name="arrow-back" size={22} color={colors.text} />
         </TouchableOpacity>
-        <Text style={styles.headerTitle}>{isEditing ? 'Editar' : 'Adicionar'}</Text>
+        <Text style={styles.headerTitle}>{isEditing ? 'Edit' : 'Add New'}</Text>
         <TouchableOpacity onPress={handleSave} style={styles.saveBtn}>
-          <Text style={styles.saveBtnText}>Salvar</Text>
+          <Text style={styles.saveBtnText}>Save</Text>
         </TouchableOpacity>
       </View>
 
@@ -220,29 +220,29 @@ export function FormScreen({ navigation, route }: Props) {
         keyboardShouldPersistTaps="handled"
       >
 
-          <SectionTitle label="Informações Básicas" />
+          <SectionTitle label="Basic Info" />
 
-          <Field label="Título *">
+          <Field label="Title *">
             <TextInput
               style={styles.input}
               value={title}
               onChangeText={setTitle}
-              placeholder="Título..."
+              placeholder="Title..."
               placeholderTextColor={colors.textDim}
             />
           </Field>
 
-          <Field label="Autor / Diretor / Estúdio">
+          <Field label="Author / Director / Studio">
             <TextInput
               style={styles.input}
               value={author}
               onChangeText={setAuthor}
-              placeholder="Autor..."
+              placeholder="Author..."
               placeholderTextColor={colors.textDim}
             />
           </Field>
 
-          <Field label="URL da Capa">
+          <Field label="Cover URL">
             <TextInput
               style={styles.input}
               value={coverUri}
@@ -253,7 +253,7 @@ export function FormScreen({ navigation, route }: Props) {
             />
           </Field>
 
-          <Field label="Tipo">
+          <Field label="Type">
             <OptionPicker options={TYPES} value={type} onChange={setType} getLabel={t => TYPE_LABELS[t]} />
           </Field>
 
@@ -261,14 +261,14 @@ export function FormScreen({ navigation, route }: Props) {
             <OptionPicker options={STATUSES} value={status} onChange={setStatus} getLabel={s => STATUS_LABELS[s]} />
           </Field>
 
-          <SectionTitle label="Progresso" />
+          <SectionTitle label="Progress" />
 
           {showEpisodes && (
             <>
-              <Field label="Episodios Totais">
+              <Field label="Total Episodes">
                 <StepInput value={totalEpisodes} onChange={setTotalEpisodes} />
               </Field>
-              <Field label="Episódio Atual">
+              <Field label="Current Episode">
                 <StepInput value={currentEpisode} onChange={setCurrentEpisode} />
               </Field>
             </>
@@ -276,10 +276,10 @@ export function FormScreen({ navigation, route }: Props) {
 
           {showVolumes && (
             <>
-              <Field label="Volumes Totais">
+              <Field label="Total Volumes">
                 <StepInput value={totalVolumes} onChange={setTotalVolumes} />
               </Field>
-              <Field label="Volume Atual">
+              <Field label="Current Volume">
                 <StepInput value={currentVolume} onChange={setCurrentVolume} />
               </Field>
             </>
@@ -287,40 +287,40 @@ export function FormScreen({ navigation, route }: Props) {
 
           {showChapters && (
             <>
-              <Field label="Total de Capítulos">
+              <Field label="Total Chapters">
                 <StepInput value={totalEpisodes} onChange={setTotalEpisodes} />
               </Field>
-              <Field label="Capítulo Atual">
+              <Field label="Current Chapter">
                 <StepInput value={currentEpisode} onChange={setCurrentEpisode} />
               </Field>
             </>
           )}
 
           {type === 'movie' && (
-            <Field label="Duração (min)">
+            <Field label="Duration (min)">
               <StepInput value={totalEpisodes} onChange={setTotalEpisodes} />
             </Field>
           )}
 
           {showSeason && (
-            <Field label="Temporada">
+            <Field label="Season">
               <StepInput value={season} onChange={setSeason} min={1} />
             </Field>
           )}
 
-          <SectionTitle label="Detalhes" />
+          <SectionTitle label="Details" />
 
-          <Field label="Plataforma / Onde assistir">
+          <Field label="Platform / Where to Watch">
             <TextInput
               style={styles.input}
               value={platform}
               onChangeText={setPlatform}
-              placeholder="Netflix, Crunchyroll, midia física..."
+              placeholder="Netflix, Crunchyroll, physical..."
               placeholderTextColor={colors.textDim}
             />
           </Field>
 
-          <Field label="Avaliação (0–10)">
+          <Field label="Rating (0–10)">
             <TextInput
               style={styles.input}
               value={rating}
@@ -331,7 +331,7 @@ export function FormScreen({ navigation, route }: Props) {
             />
           </Field>
 
-          <Field label="Iniciado em">
+          <Field label="Started at">
             <TextInput
               style={styles.input}
               value={startedAt}
@@ -341,7 +341,7 @@ export function FormScreen({ navigation, route }: Props) {
             />
           </Field>
 
-          <Field label="Finalizado em">
+          <Field label="Finished at">
             <TextInput
               style={styles.input}
               value={finishedAt}
@@ -351,12 +351,12 @@ export function FormScreen({ navigation, route }: Props) {
             />
           </Field>
 
-          <Field label="Notas">
+          <Field label="Notes">
             <TextInput
               style={[styles.input, styles.textArea]}
               value={notes}
               onChangeText={setNotes}
-              placeholder="Sua observação, onde parou..."
+              placeholder="Your thoughts, where you stopped..."
               placeholderTextColor={colors.textDim}
               multiline
               numberOfLines={4}

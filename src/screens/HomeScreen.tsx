@@ -106,7 +106,7 @@ export function HomeScreen({ navigation }: Props) {
           style={styles.searchInput}
           value={search}
           onChangeText={setSearch}
-          placeholder="Buscar..."
+          placeholder="Search..."
           placeholderTextColor={colors.textDim}
           autoCapitalize="none"
         />
@@ -134,7 +134,7 @@ export function HomeScreen({ navigation }: Props) {
         showsVerticalScrollIndicator={false}
         ListEmptyComponent={
           <View style={styles.empty}>
-            <Text style={styles.emptyText}>Nada por aqui ainda.</Text>
+            <Text style={styles.emptyText}>Nothing here yet.</Text>
           </View>
         }
       />

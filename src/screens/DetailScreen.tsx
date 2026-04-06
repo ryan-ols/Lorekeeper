@@ -41,16 +41,16 @@ export function DetailScreen({ navigation, route }: Props) {
     setItem(found);
   }, [route.params.id]);
 
-    const TYPE_PT: Record<string, string> = {
-      book: 'Livro', series: 'Série', movie: 'Filme',
-      anime: 'Anime', manga: 'Mangá', game: 'Jogo',
-      lightnovel: 'Light Novel', other: 'Outro',
-    };
+  const TYPE_PT: Record<string, string> = {
+    book: 'Book', series: 'Series', movie: 'Movie',
+    anime: 'Anime', manga: 'Manga', game: 'Game',
+    lightnovel: 'Light Novel', other: 'Other',
+  };
 
-    const STATUS_PT: Record<string, string> = {
-      watching: 'Assistindo', reading: 'Lendo', playing: 'Jogando',
-      completed: 'Concluído', paused: 'Pausado', dropped: 'Abandonado', plan: 'Planejado',
-    };
+  const STATUS_PT: Record<string, string> = {
+    watching: 'Watching', reading: 'Reading', playing: 'Playing',
+    completed: 'Completed', paused: 'Paused', dropped: 'Dropped', plan: 'Planned',
+  };
 
   if (!item) return null;
 
@@ -58,15 +58,15 @@ export function DetailScreen({ navigation, route }: Props) {
   const total = item.totalEpisodes ?? item.totalVolumes ?? 0;
 
   const getProgressLabel = () => {
-    if (item.type === 'manga') return 'capítulos';
-    if (item.totalEpisodes) return 'episódios';
+    if (item.type === 'manga') return 'chapters';
+    if (item.totalEpisodes) return 'episodes';
     return 'volumes';
   };
 
   function handleDelete() {
-    Alert.alert('Excluir', `Remover "${item!.title}"?`, [
-      { text: 'Cancelar', style: 'cancel' },
-      { text: 'Excluir', style: 'destructive', onPress: () => {
+    Alert.alert('Delete', `Remove "${item!.title}"?`, [
+      { text: 'Cancel', style: 'cancel' },
+      { text: 'Delete', style: 'destructive', onPress: () => {
           deleteMedia(item!.id);
           navigation.goBack();
         },
@@ -124,12 +124,12 @@ export function DetailScreen({ navigation, route }: Props) {
         )}
 
         <View style={styles.section}>
-          <Row label="Tipo" value={TYPE_PT[item.type]} />
+          <Row label="Type" value={TYPE_PT[item.type]} />
           <Row label="Status" value={STATUS_PT[item.status]} />
-          <Row label="Plataforma" value={item.platform} />
-          <Row label="Temporada" value={item.season} />
-          <Row label="Iniciado em" value={item.startedAt} />
-          <Row label="Concluído em" value={item.finishedAt} />
+          <Row label="Platform" value={item.platform} />
+          <Row label="Season" value={item.season} />
+          <Row label="Started" value={item.startedAt} />
+          <Row label="Finished" value={item.finishedAt} />
         </View>
 
         {item.notes && (

@@ -5,14 +5,14 @@ import { ProgressBar } from './ProgressBar';
 import { colors } from '../theme/colors';
 
 const TYPE_LABELS: Record<MediaType, string> = {
-  book: 'LIVRO', series: 'SÉRIE', movie: 'FILME',
-  anime: 'ANIME', manga: 'MANGÁ', game: 'JOGO',
-  lightnovel: 'LN', other: 'OUTRO',
+  book: 'BOOK', series: 'SERIES', movie: 'MOVIE',
+  anime: 'ANIME', manga: 'MANGA', game: 'GAME',
+  lightnovel: 'LN', other: 'OTHER',
 };
 
 const STATUS_LABELS: Record<StatusType, string> = {
-  watching: 'Assistindo', reading: 'Lendo', playing: 'Jogando',
-  completed: 'Concluído', paused: 'Pausado', dropped: 'Abandonado', plan: 'Planejado',
+  watching: 'Watching', reading: 'Reading', playing: 'Playing',
+  completed: 'Completed', paused: 'Paused', dropped: 'Dropped', plan: 'Planned',
 };
 
 function getTypeStyle(type: MediaType) {
