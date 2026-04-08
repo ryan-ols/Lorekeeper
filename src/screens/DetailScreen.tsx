@@ -10,13 +10,9 @@ import { RouteProp } from '@react-navigation/native';
 import { getMediaById, deleteMedia } from '../db/database';
 import { ProgressBar } from '../components/ProgressBar';
 import { MediaItem } from '../types';
+import { getProgress } from '../utils/progress';
 import { colors } from '../theme/colors';
-
-type RootStackParamList = {
-  Home: undefined;
-  Detail: { id: string };
-  Form: { id?: string };
-};
+import { RootStackParamList } from '../../App';
 
 type Props = {
   navigation: NativeStackNavigationProp<RootStackParamList, 'Detail'>;
@@ -54,14 +50,7 @@ export function DetailScreen({ navigation, route }: Props) {
 
   if (!item) return null;
 
-  const current = item.currentEpisode ?? item.currentVolume ?? 0;
-  const total = item.totalEpisodes ?? item.totalVolumes ?? 0;
-
-  const getProgressLabel = () => {
-    if (item.type === 'manga') return 'capítulos';
-    if (item.totalEpisodes) return 'episódios';
-    return 'volumes';
-  };
+const { current, total, label } = getProgress(item);
 
   function handleDelete() {
     Alert.alert('Excluir', `Remover "${item!.title}"?`, [
@@ -118,7 +107,7 @@ export function DetailScreen({ navigation, route }: Props) {
           <View style={styles.progressSection}>
             <ProgressBar current={current} total={total} />
             <Text style={styles.progressDetail}>
-              {`${current} / ${total} ${getProgressLabel()}`}
+              {`${current} / ${total} ${label}`}
             </Text>
           </View>
         )}
@@ -127,7 +116,10 @@ export function DetailScreen({ navigation, route }: Props) {
           <Row label="Tipo" value={TYPE_PT[item.type]} />
           <Row label="Status" value={STATUS_PT[item.status]} />
           <Row label="Plataforma" value={item.platform} />
-          <Row label="Temporada" value={item.season} />
+          {item.type === 'series' && <Row label="Total de Temporadas" value={item.totalSeasons} />}
+          {item.type === 'series' && <Row label="Temporada Atual" value={item.currentSeason} />}
+          {item.type === 'lightnovel' && <Row label="Total de Volumes" value={item.totalVolumes} />}
+          {item.type === 'lightnovel' && <Row label="Volume Atual" value={item.currentVolume} />}
           <Row label="Iniciado em" value={item.startedAt} />
           <Row label="Concluído em" value={item.finishedAt} />
         </View>
