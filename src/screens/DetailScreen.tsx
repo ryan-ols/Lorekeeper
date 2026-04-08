@@ -116,9 +116,12 @@ const { current, total, label } = getProgress(item);
           <Row label="Type" value={TYPE_PT[item.type]} />
           <Row label="Status" value={STATUS_PT[item.status]} />
           <Row label="Platform" value={item.platform} />
-          <Row label="Season" value={item.season} />
-          <Row label="Started" value={item.startedAt} />
-          <Row label="Finished" value={item.finishedAt} />
+          {item.type === 'series' && <Row label="Total seasons" value={item.totalSeasons} />}
+          {item.type === 'series' && <Row label="Current season" value={item.currentSeason} />}
+          {item.type === 'lightnovel' && <Row label="Total volumes" value={item.totalVolumes} />}
+          {item.type === 'lightnovel' && <Row label="Current volume" value={item.currentVolume} />}
+          <Row label="Begin in" value={item.startedAt} />
+          <Row label="Complete in" value={item.finishedAt} />
         </View>
 
         {item.notes && (

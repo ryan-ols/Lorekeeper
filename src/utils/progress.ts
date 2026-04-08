@@ -6,7 +6,7 @@ export const getProgress = (item: MediaItem): { current: number; total: number; 
       return {
         current: item.currentEpisodeInSeason ?? 0,
         total: item.episodesInCurrentSeason ?? 0,
-        label: `T${item.currentSeason ?? 1} · ep ${item.currentEpisodeInSeason ?? 0} de ${item.episodesInCurrentSeason ?? 0}`,
+        label: `T${item.currentSeason ?? 1} · ep ${item.currentEpisodeInSeason ?? 0} off ${item.episodesInCurrentSeason ?? 0}`,
       };
     case 'anime':
       return {
@@ -24,7 +24,7 @@ export const getProgress = (item: MediaItem): { current: number; total: number; 
       return {
         current: item.currentChapterInVolume ?? 0,
         total: item.chaptersInCurrentVolume ?? 0,
-        label: `Vol.${item.currentVolume ?? 1} · cap ${item.currentChapterInVolume ?? 0} de ${item.chaptersInCurrentVolume ?? 0}`,
+        label: `Vol.${item.currentVolume ?? 1} · page ${item.currentChapterInVolume ?? 0} off ${item.chaptersInCurrentVolume ?? 0}`,
       };
     case 'book':
       return {
