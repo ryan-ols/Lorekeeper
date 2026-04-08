@@ -2,6 +2,7 @@ import React from 'react';
 import { View, Text, Image, TouchableOpacity, StyleSheet } from 'react-native';
 import { MediaItem, MediaType, StatusType } from '../types';
 import { ProgressBar } from './ProgressBar';
+import { getProgress } from '../utils/progress';
 import { colors } from '../theme/colors';
 
 const TYPE_LABELS: Record<MediaType, string> = {
@@ -34,14 +35,13 @@ export function CatalogCard({ item, onPress }: Props) {
   const typeStyle = getTypeStyle(item.type);
   const statusStyle = getStatusStyle(item.status);
 
-  const current = item.currentEpisode ?? item.currentVolume ?? 0;
-  const total = item.totalEpisodes ?? item.totalVolumes ?? 0;
+  const { current, total, label } = getProgress(item);  
 
   const subtitle = [
     item.author,
-    item.season ? `Season ${item.season}` : null,
-    item.currentEpisode != null ? `Ep ${item.currentEpisode}` : null,
-  ].filter(Boolean).join(', ');
+    item.type === 'series' ? `T${item.currentSeason ?? 1}, Ep ${item.currentEpisodeInSeason ?? 0}` :
+    item.type === 'lightnovel' ? `Vol.${item.currentVolume ?? 1}` : null,
+  ].filter(Boolean).join(' · ');
 
   return (
     <TouchableOpacity style={styles.card} onPress={onPress} activeOpacity={0.75}>

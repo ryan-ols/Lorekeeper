@@ -10,12 +10,7 @@ import { RouteProp } from '@react-navigation/native';
 import { insertMedia, updateMedia, getMediaById } from '../db/database';
 import { MediaItem, MediaType, StatusType } from '../types';
 import { colors } from '../theme/colors';
-
-type RootStackParamList = {
-  Home: undefined;
-  Detail: { id: string };
-  Form: { id?: string };
-};
+import { RootStackParamList } from '../../App';
 
 type Props = {
   navigation: NativeStackNavigationProp<RootStackParamList, 'Form'>;
@@ -130,6 +125,18 @@ export function FormScreen({ navigation, route }: Props) {
   const [platform, setPlatform] = useState('');
   const [rating, setRating] = useState('');
   const [notes, setNotes] = useState('');
+  const [totalSeasons, setTotalSeasons] = useState('');
+  const [currentSeason, setCurrentSeason] = useState('');
+  const [episodesInCurrentSeason, setEpisodesInCurrentSeason] = useState('');
+  const [currentEpisodeInSeason, setCurrentEpisodeInSeason] = useState('');
+  const [totalChapters, setTotalChapters] = useState('');
+  const [currentChapter, setCurrentChapter] = useState('');
+  const [chaptersInCurrentVolume, setChaptersInCurrentVolume] = useState('');
+  const [currentChapterInVolume, setCurrentChapterInVolume] = useState('');
+  const [totalPages, setTotalPages] = useState('');
+  const [currentPage, setCurrentPage] = useState('');
+  const [watchedMinutes, setWatchedMinutes] = useState('');
+  
 
   useEffect(() => {
     if (editId) {
@@ -150,6 +157,20 @@ export function FormScreen({ navigation, route }: Props) {
       setPlatform(item.platform ?? '');
       setRating(item.rating?.toString() ?? '');
       setNotes(item.notes ?? '');
+      setTotalPages(item.totalPages?.toString() ?? '');
+      setCurrentPage(item.currentPage?.toString() ?? '');
+      setWatchedMinutes(item.watchedMinutes?.toString() ?? '');
+      setTotalSeasons(item.totalSeasons?.toString() ?? '');
+      setCurrentSeason(item.currentSeason?.toString() ?? '');
+      setEpisodesInCurrentSeason(item.episodesInCurrentSeason?.toString() ?? '');
+      setCurrentEpisodeInSeason(item.currentEpisodeInSeason?.toString() ?? '');
+      setTotalChapters(item.totalChapters?.toString() ?? '');
+      setCurrentChapter(item.currentChapter?.toString() ?? '');
+      setChaptersInCurrentVolume(item.chaptersInCurrentVolume?.toString() ?? '');
+      setCurrentChapterInVolume(item.currentChapterInVolume?.toString() ?? '');
+      setTotalPages(item.totalPages?.toString() ?? '');
+      setCurrentPage(item.currentPage?.toString() ?? '');
+      setWatchedMinutes(item.watchedMinutes?.toString() ?? '');
     }
   }, [editId]);
 
@@ -179,6 +200,17 @@ export function FormScreen({ navigation, route }: Props) {
       notes: notes.trim() || undefined,
       createdAt: isEditing ? '' : now,
       updatedAt: now,
+      totalSeasons: totalSeasons ? parseInt(totalSeasons) : undefined,
+      currentSeason: currentSeason ? parseInt(currentSeason) : undefined,
+      episodesInCurrentSeason: episodesInCurrentSeason ? parseInt(episodesInCurrentSeason) : undefined,
+      currentEpisodeInSeason: currentEpisodeInSeason ? parseInt(currentEpisodeInSeason) : undefined,
+      totalChapters: totalChapters ? parseInt(totalChapters) : undefined,
+      currentChapter: currentChapter ? parseInt(currentChapter) : undefined,
+      chaptersInCurrentVolume: chaptersInCurrentVolume ? parseInt(chaptersInCurrentVolume) : undefined,
+      currentChapterInVolume: currentChapterInVolume ? parseInt(currentChapterInVolume) : undefined,
+      totalPages: totalPages ? parseInt(totalPages) : undefined,
+      currentPage: currentPage ? parseInt(currentPage) : undefined,
+      watchedMinutes: watchedMinutes ? parseInt(watchedMinutes) : undefined,
     };
 
     if (isEditing) {
@@ -192,10 +224,12 @@ export function FormScreen({ navigation, route }: Props) {
     navigation.goBack();
   }
 
-  const showEpisodes = ['series', 'anime'].includes(type);
-  const showVolumes = ['book', 'lightnovel'].includes(type);
-  const showChapters = ['manga'].includes(type);
-  const showSeason = ['series', 'anime'].includes(type);
+    const showEpisodes = type === 'anime' || type === 'manga';
+    const showVolumes = type === 'lightnovel';
+    const showSeasons = type === 'series';
+    const showPages = type === 'book';
+    const showMinutes = type === 'movie';
+  
 
   return (
     <SafeAreaView style={styles.safe}>
@@ -263,50 +297,83 @@ export function FormScreen({ navigation, route }: Props) {
 
           <SectionTitle label="Progress" />
 
-          {showEpisodes && (
-            <>
-              <Field label="Total Episodes">
-                <StepInput value={totalEpisodes} onChange={setTotalEpisodes} />
-              </Field>
-              <Field label="Current Episode">
-                <StepInput value={currentEpisode} onChange={setCurrentEpisode} />
-              </Field>
-            </>
-          )}
+        {showSeasons && (
+          <>
+            <Field label="Total seasons">
+              <StepInput value={totalSeasons} onChange={setTotalSeasons} min={1} />
+            </Field>
+            <Field label="Current season">
+              <StepInput value={currentSeason} onChange={setCurrentSeason} min={1} />
+            </Field>
+            <Field label="Episodes in Current Season">
+              <StepInput value={episodesInCurrentSeason} onChange={setEpisodesInCurrentSeason} />
+            </Field>
+            <Field label="Current Episode (in season)">
+              <StepInput value={currentEpisodeInSeason} onChange={setCurrentEpisodeInSeason} />
+            </Field>
+          </>
+        )}
 
-          {showVolumes && (
-            <>
-              <Field label="Total Volumes">
-                <StepInput value={totalVolumes} onChange={setTotalVolumes} />
-              </Field>
-              <Field label="Current Volume">
-                <StepInput value={currentVolume} onChange={setCurrentVolume} />
-              </Field>
-            </>
-          )}
+        {showEpisodes && type === 'anime' && (
+          <>
+            <Field label="Total episodes">
+              <StepInput value={totalEpisodes} onChange={setTotalEpisodes} />
+            </Field>
+            <Field label="Current episode">
+              <StepInput value={currentEpisode} onChange={setCurrentEpisode} />
+            </Field>
+          </>
+        )}
 
-          {showChapters && (
-            <>
-              <Field label="Total Chapters">
-                <StepInput value={totalEpisodes} onChange={setTotalEpisodes} />
-              </Field>
-              <Field label="Current Chapter">
-                <StepInput value={currentEpisode} onChange={setCurrentEpisode} />
-              </Field>
-            </>
-          )}
+        {showEpisodes && type === 'manga' && (
+          <>
+            <Field label="Total chapters">
+              <StepInput value={totalChapters} onChange={setTotalChapters} />
+            </Field>
+            <Field label="Current chapter">
+              <StepInput value={currentChapter} onChange={setCurrentChapter} />
+            </Field>
+          </>
+        )}
 
-          {type === 'movie' && (
+        {showVolumes && (
+          <>
+            <Field label="Total volumes">
+              <StepInput value={totalVolumes} onChange={setTotalVolumes} />
+            </Field>
+            <Field label="Current volume">
+              <StepInput value={currentVolume} onChange={setCurrentVolume} min={1} />
+            </Field>
+            <Field label="Chapters in Current Volume">
+              <StepInput value={chaptersInCurrentVolume} onChange={setChaptersInCurrentVolume} />
+            </Field>
+            <Field label="Current Chapter (in volume)">
+              <StepInput value={currentChapterInVolume} onChange={setCurrentChapterInVolume} />
+            </Field>
+          </>
+        )}
+
+        {showPages && (
+          <>
+            <Field label="Total pages">
+              <StepInput value={totalPages} onChange={setTotalPages} />
+            </Field>
+            <Field label="Current page">
+              <StepInput value={currentPage} onChange={setCurrentPage} />
+            </Field>
+          </>
+        )}
+
+        {showMinutes && (
+          <>
             <Field label="Duration (min)">
               <StepInput value={totalEpisodes} onChange={setTotalEpisodes} />
             </Field>
-          )}
-
-          {showSeason && (
-            <Field label="Season">
-              <StepInput value={season} onChange={setSeason} min={1} />
+            <Field label="Watched minutes">
+              <StepInput value={watchedMinutes} onChange={setWatchedMinutes} />
             </Field>
-          )}
+          </>
+        )}
 
           <SectionTitle label="Details" />
 
@@ -394,7 +461,7 @@ const styles = StyleSheet.create({
   input: {
     backgroundColor: colors.bgCard, borderWidth: 1, borderColor: colors.border,
     borderRadius: 8, paddingHorizontal: 12, paddingVertical: 10,
-    fontSize: 14, color: colors.text,
+    fontSize: 14, color: colors.text, lineHeight: 20,
   },
   textArea: { minHeight: 100 },
   optionRow: { gap: 8, flexDirection: 'row' },
@@ -414,6 +481,7 @@ const styles = StyleSheet.create({
   stepInput: {
     flex: 1, height: 40, backgroundColor: colors.bgCard,
     borderTopWidth: 1, borderBottomWidth: 1, borderColor: colors.border,
-    textAlign: 'center', fontSize: 15, color: colors.text,
+    textAlign: 'center', fontSize: 15, color: colors.text, lineHeight: 20,
+    paddingVertical: 0,
   },
 });

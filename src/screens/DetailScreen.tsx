@@ -10,13 +10,9 @@ import { RouteProp } from '@react-navigation/native';
 import { getMediaById, deleteMedia } from '../db/database';
 import { ProgressBar } from '../components/ProgressBar';
 import { MediaItem } from '../types';
+import { getProgress } from '../utils/progress';
 import { colors } from '../theme/colors';
-
-type RootStackParamList = {
-  Home: undefined;
-  Detail: { id: string };
-  Form: { id?: string };
-};
+import { RootStackParamList } from '../../App';
 
 type Props = {
   navigation: NativeStackNavigationProp<RootStackParamList, 'Detail'>;
@@ -54,14 +50,7 @@ export function DetailScreen({ navigation, route }: Props) {
 
   if (!item) return null;
 
-  const current = item.currentEpisode ?? item.currentVolume ?? 0;
-  const total = item.totalEpisodes ?? item.totalVolumes ?? 0;
-
-  const getProgressLabel = () => {
-    if (item.type === 'manga') return 'chapters';
-    if (item.totalEpisodes) return 'episodes';
-    return 'volumes';
-  };
+const { current, total, label } = getProgress(item);
 
   function handleDelete() {
     Alert.alert('Delete', `Remove "${item!.title}"?`, [
@@ -118,7 +107,7 @@ export function DetailScreen({ navigation, route }: Props) {
           <View style={styles.progressSection}>
             <ProgressBar current={current} total={total} />
             <Text style={styles.progressDetail}>
-              {`${current} / ${total} ${getProgressLabel()}`}
+              {`${current} / ${total} ${label}`}
             </Text>
           </View>
         )}

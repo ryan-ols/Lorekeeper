@@ -1,5 +1,5 @@
 import React from 'react';
-import { ScrollView, TouchableOpacity, Text, StyleSheet } from 'react-native';
+import { ScrollView, TouchableOpacity, Text, StyleSheet, View } from 'react-native';
 import { StatusType } from '../types';
 import { colors } from '../theme/colors';
 
@@ -20,44 +20,57 @@ interface Props {
 
 export function FilterTabs({ active, onChange }: Props) {
   return (
-    <ScrollView
-      horizontal
-      showsHorizontalScrollIndicator={false}
-      style={styles.scroll}
-      contentContainerStyle={[styles.container]}
-    >
-      {TABS.map(tab => {
-        const isActive = active === tab.value;
-        return (
-          <TouchableOpacity
-            key={tab.value}
-            onPress={() => onChange(tab.value)}
-            style={[styles.tab, isActive && styles.tabActive]}
-          >
-            <Text style={[styles.label, isActive && styles.labelActive]}>{tab.label}</Text>
-          </TouchableOpacity>
-        );
-      })}
-    </ScrollView>
+    <View style={styles.wrapper}>
+      <ScrollView
+        horizontal
+        showsHorizontalScrollIndicator={false}
+        contentContainerStyle={styles.container}
+      >
+        {TABS.map(tab => {
+          const isActive = active === tab.value;
+          return (
+            <TouchableOpacity
+              key={tab.value}
+              onPress={() => onChange(tab.value)}
+              style={[styles.tab, isActive && styles.tabActive]}
+            >
+              <Text style={[styles.label, isActive && styles.labelActive]}>{tab.label}</Text>
+            </TouchableOpacity>
+          );
+        })}
+      </ScrollView>
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
-  scroll: { marginBottom: 16 },
-  container: { gap: 8, paddingHorizontal: 20 },
+  wrapper: {
+    height: 52,
+    justifyContent: 'center',
+    marginBottom: 8,
+  },
+  container: {
+    gap: 8,
+    paddingHorizontal: 20,
+    alignItems: 'center',
+  },
   tab: {
-  paddingHorizontal: 16,
-  paddingVertical: 7,
-  borderRadius: 20,
-  backgroundColor: colors.bgCard,
-  borderWidth: 1,
-  borderColor: colors.border,
-  alignSelf: 'center',
-},
+    paddingHorizontal: 16,
+    paddingVertical: 8,
+    borderRadius: 20,
+    backgroundColor: colors.bgCard,
+    borderWidth: 1,
+    borderColor: colors.border,
+  },
   tabActive: {
     backgroundColor: colors.pink,
     borderColor: colors.pink,
   },
-  label: { fontSize: 13, color: colors.textMuted, fontWeight: '500' },
+  label: {
+    fontSize: 13,
+    color: colors.textMuted,
+    fontWeight: '500',
+    lineHeight: 18,
+  },
   labelActive: { color: colors.white },
 });

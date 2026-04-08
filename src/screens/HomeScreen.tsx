@@ -14,12 +14,8 @@ import { FilterTabs } from '../components/FilterTabs';
 import { MediaItem, StatusType } from '../types';
 import { colors } from '../theme/colors';
 import { SortModal, SortOption } from '../components/SortModal';
-
-type RootStackParamList = {
-  Home: undefined;
-  Detail: { id: string };
-  Form: { id?: string };
-};
+import { RootStackParamList } from '../../App';
+import { getProgress } from '../utils/progress';
 
 type Props = {
   navigation: NativeStackNavigationProp<RootStackParamList, 'Home'>;
@@ -58,23 +54,19 @@ export function HomeScreen({ navigation }: Props) {
       break;
     case 'progress_asc':
       list = [...list].sort((a, b) => {
-        const totalA = a.totalEpisodes ?? a.totalVolumes ?? 0;
-        const currentA = a.currentEpisode ?? a.currentVolume ?? 0;
-        const totalB = b.totalEpisodes ?? b.totalVolumes ?? 0;
-        const currentB = b.currentEpisode ?? b.currentVolume ?? 0;
-        const pa = totalA > 0 ? currentA / totalA : 0;
-        const pb = totalB > 0 ? currentB / totalB : 0;
+        const { current: ca, total: ta } = getProgress(a);
+        const { current: cb, total: tb } = getProgress(b);
+        const pa = ta > 0 ? ca / ta : 0;
+        const pb = tb > 0 ? cb / tb : 0;
         return pa - pb;
       });
       break;
     case 'progress_desc':
       list = [...list].sort((a, b) => {
-        const totalA = a.totalEpisodes ?? a.totalVolumes ?? 0;
-        const currentA = a.currentEpisode ?? a.currentVolume ?? 0;
-        const totalB = b.totalEpisodes ?? b.totalVolumes ?? 0;
-        const currentB = b.currentEpisode ?? b.currentVolume ?? 0;
-        const pa = totalA > 0 ? currentA / totalA : 0;
-        const pb = totalB > 0 ? currentB / totalB : 0;
+        const { current: ca, total: ta } = getProgress(a);
+        const { current: cb, total: tb } = getProgress(b);
+        const pa = ta > 0 ? ca / ta : 0;
+        const pb = tb > 0 ? cb / tb : 0;
         return pb - pa;
       });
       break;
@@ -182,5 +174,5 @@ const styles = StyleSheet.create({
     paddingHorizontal: 12, marginHorizontal: 20, marginBottom: 16, height: 40,
   },
   searchIcon: { marginRight: 8 },
-  searchInput: { flex: 1, fontSize: 14, color: colors.text },
+  searchInput: { flex: 1, fontSize: 14, color: colors.text, lineHeight: 20, paddingVertical: 0 },
 });

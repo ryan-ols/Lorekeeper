@@ -16,6 +16,17 @@ export function setupDatabase() {
       currentEpisode INTEGER,
       totalVolumes INTEGER,
       currentVolume INTEGER,
+      chaptersInCurrentVolume INTEGER,
+      currentChapterInVolume INTEGER,
+      totalSeasons INTEGER,
+      currentSeason INTEGER,
+      episodesInCurrentSeason INTEGER,
+      currentEpisodeInSeason INTEGER,
+      totalPages INTEGER,
+      currentPage INTEGER,
+      totalChapters INTEGER,
+      currentChapter INTEGER,
+      watchedMinutes INTEGER,
       season INTEGER,
       startedAt TEXT,
       finishedAt TEXT,
@@ -26,6 +37,28 @@ export function setupDatabase() {
       updatedAt TEXT NOT NULL
     );
   `);
+
+  const columns = db.getAllSync<{ name: string }>(`PRAGMA table_info(media)`).map(c => c.name);
+
+  const newColumns: { name: string; type: string }[] = [
+    { name: 'chaptersInCurrentVolume', type: 'INTEGER' },
+    { name: 'currentChapterInVolume', type: 'INTEGER' },
+    { name: 'totalSeasons', type: 'INTEGER' },
+    { name: 'currentSeason', type: 'INTEGER' },
+    { name: 'episodesInCurrentSeason', type: 'INTEGER' },
+    { name: 'currentEpisodeInSeason', type: 'INTEGER' },
+    { name: 'totalPages', type: 'INTEGER' },
+    { name: 'currentPage', type: 'INTEGER' },
+    { name: 'totalChapters', type: 'INTEGER' },
+    { name: 'currentChapter', type: 'INTEGER' },
+    { name: 'watchedMinutes', type: 'INTEGER' },
+  ];
+
+  for (const col of newColumns) {
+    if (!columns.includes(col.name)) {
+      db.execSync(`ALTER TABLE media ADD COLUMN ${col.name} ${col.type};`);
+    }
+  }
 }
 
 export function getAllMedia(): MediaItem[] {
@@ -40,16 +73,42 @@ export function insertMedia(item: MediaItem): void {
   db.runSync(
     `INSERT INTO media (
       id, title, author, type, status, coverUri,
-      totalEpisodes, currentEpisode, totalVolumes, currentVolume,
-      season, startedAt, finishedAt, notes, rating, platform,
+      totalEpisodes, currentEpisode,
+      totalVolumes, currentVolume,
+      chaptersInCurrentVolume, currentChapterInVolume,
+      totalSeasons, currentSeason,
+      episodesInCurrentSeason, currentEpisodeInSeason,
+      totalPages, currentPage,
+      totalChapters, currentChapter,
+      watchedMinutes, season,
+      startedAt, finishedAt, notes, rating, platform,
       createdAt, updatedAt
-    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+    ) VALUES (
+      ?, ?, ?, ?, ?, ?,
+      ?, ?,
+      ?, ?,
+      ?, ?,
+      ?, ?,
+      ?, ?,
+      ?, ?,
+      ?, ?,
+      ?, ?,
+      ?, ?, ?, ?, ?,
+      ?, ?
+    )`,
     [
-      item.id, item.title, item.author ?? null, item.type, item.status,
-      item.coverUri ?? null, item.totalEpisodes ?? null, item.currentEpisode ?? null,
-      item.totalVolumes ?? null, item.currentVolume ?? null, item.season ?? null,
+      item.id, item.title, item.author ?? null, item.type, item.status, item.coverUri ?? null,
+      item.totalEpisodes ?? null, item.currentEpisode ?? null,
+      item.totalVolumes ?? null, item.currentVolume ?? null,
+      item.chaptersInCurrentVolume ?? null, item.currentChapterInVolume ?? null,
+      item.totalSeasons ?? null, item.currentSeason ?? null,
+      item.episodesInCurrentSeason ?? null, item.currentEpisodeInSeason ?? null,
+      item.totalPages ?? null, item.currentPage ?? null,
+      item.totalChapters ?? null, item.currentChapter ?? null,
+      item.watchedMinutes ?? null, item.season ?? null,
       item.startedAt ?? null, item.finishedAt ?? null, item.notes ?? null,
-      item.rating ?? null, item.platform ?? null, item.createdAt, item.updatedAt,
+      item.rating ?? null, item.platform ?? null,
+      item.createdAt, item.updatedAt,
     ]
   );
 }
@@ -58,16 +117,30 @@ export function updateMedia(item: MediaItem): void {
   db.runSync(
     `UPDATE media SET
       title = ?, author = ?, type = ?, status = ?, coverUri = ?,
-      totalEpisodes = ?, currentEpisode = ?, totalVolumes = ?, currentVolume = ?,
-      season = ?, startedAt = ?, finishedAt = ?, notes = ?, rating = ?,
+      totalEpisodes = ?, currentEpisode = ?,
+      totalVolumes = ?, currentVolume = ?,
+      chaptersInCurrentVolume = ?, currentChapterInVolume = ?,
+      totalSeasons = ?, currentSeason = ?,
+      episodesInCurrentSeason = ?, currentEpisodeInSeason = ?,
+      totalPages = ?, currentPage = ?,
+      totalChapters = ?, currentChapter = ?,
+      watchedMinutes = ?, season = ?,
+      startedAt = ?, finishedAt = ?, notes = ?, rating = ?,
       platform = ?, updatedAt = ?
     WHERE id = ?`,
     [
-      item.title, item.author ?? null, item.type, item.status,
-      item.coverUri ?? null, item.totalEpisodes ?? null, item.currentEpisode ?? null,
-      item.totalVolumes ?? null, item.currentVolume ?? null, item.season ?? null,
+      item.title, item.author ?? null, item.type, item.status, item.coverUri ?? null,
+      item.totalEpisodes ?? null, item.currentEpisode ?? null,
+      item.totalVolumes ?? null, item.currentVolume ?? null,
+      item.chaptersInCurrentVolume ?? null, item.currentChapterInVolume ?? null,
+      item.totalSeasons ?? null, item.currentSeason ?? null,
+      item.episodesInCurrentSeason ?? null, item.currentEpisodeInSeason ?? null,
+      item.totalPages ?? null, item.currentPage ?? null,
+      item.totalChapters ?? null, item.currentChapter ?? null,
+      item.watchedMinutes ?? null, item.season ?? null,
       item.startedAt ?? null, item.finishedAt ?? null, item.notes ?? null,
-      item.rating ?? null, item.platform ?? null, item.updatedAt, item.id,
+      item.rating ?? null, item.platform ?? null,
+      item.updatedAt, item.id,
     ]
   );
 }
