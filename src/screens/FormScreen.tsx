@@ -11,6 +11,7 @@ import { insertMedia, updateMedia, getMediaById } from '../db/database';
 import { MediaItem, MediaType, StatusType } from '../types';
 import { colors } from '../theme/colors';
 import { RootStackParamList } from '../../App';
+import { fetchCoverUrl } from '../utils/coverSearch';
 
 type Props = {
   navigation: NativeStackNavigationProp<RootStackParamList, 'Form'>;
@@ -136,6 +137,8 @@ export function FormScreen({ navigation, route }: Props) {
   const [totalPages, setTotalPages] = useState('');
   const [currentPage, setCurrentPage] = useState('');
   const [watchedMinutes, setWatchedMinutes] = useState('');
+  const [autoCover, setAutoCover] = useState(false);
+  const [loadingCover, setLoadingCover] = useState(false); 
   
 
   useEffect(() => {
@@ -174,10 +177,23 @@ export function FormScreen({ navigation, route }: Props) {
     }
   }, [editId]);
 
-  function handleSave() {
+  async function handleSave() {
     if (!title.trim()) {
       Alert.alert('Obrigatório', 'O título é obrigatório.');
       return;
+    }
+
+    let finalCoverUri = coverUri.trim() || undefined;
+
+    if (autoCover && title.trim()) {
+      setLoadingCover(true);
+      const found = await fetchCoverUrl(title.trim(), type);
+      setLoadingCover(false);
+      if (found) {
+        finalCoverUri = found;
+      } else {
+        Alert.alert('Capa não encontrada', 'Não foi possível encontrar a capa automaticamente.');
+      }
     }
 
     const now = new Date().toISOString();
@@ -187,7 +203,7 @@ export function FormScreen({ navigation, route }: Props) {
       author: author.trim() || undefined,
       type,
       status,
-      coverUri: coverUri.trim() || undefined,
+      coverUri: finalCoverUri,
       totalEpisodes: totalEpisodes ? parseInt(totalEpisodes) : undefined,
       currentEpisode: currentEpisode ? parseInt(currentEpisode) : undefined,
       totalVolumes: totalVolumes ? parseInt(totalVolumes) : undefined,
@@ -238,8 +254,14 @@ export function FormScreen({ navigation, route }: Props) {
           <Ionicons name="arrow-back" size={22} color={colors.text} />
         </TouchableOpacity>
         <Text style={styles.headerTitle}>{isEditing ? 'Editar' : 'Adicionar'}</Text>
-        <TouchableOpacity onPress={handleSave} style={styles.saveBtn}>
-          <Text style={styles.saveBtnText}>Salvar</Text>
+        <TouchableOpacity
+          onPress={handleSave}
+          style={[styles.saveBtn, loadingCover && { opacity: 0.6 }]}
+          disabled={loadingCover}
+        >
+          <Text style={styles.saveBtnText}>
+            {loadingCover ? 'Buscando...' : 'Salvar'}
+          </Text>
         </TouchableOpacity>
       </View>
 
@@ -277,14 +299,32 @@ export function FormScreen({ navigation, route }: Props) {
           </Field>
 
           <Field label="URL da Capa">
-            <TextInput
-              style={styles.input}
-              value={coverUri}
-              onChangeText={setCoverUri}
-              placeholder="https://..."
-              placeholderTextColor={colors.textDim}
-              autoCapitalize="none"
-            />
+            <View style={styles.coverRow}>
+              <TextInput
+                style={[styles.input, { flex: 1 }]}
+                value={coverUri}
+                onChangeText={setCoverUri}
+                placeholder="https://..."
+                placeholderTextColor={colors.textDim}
+                autoCapitalize="none"
+                editable={!autoCover}
+              />
+              <TouchableOpacity
+                style={[styles.autoCoverBtn, autoCover && styles.autoCoverBtnActive]}
+                onPress={() => setAutoCover(prev => !prev)}
+              >
+                <Ionicons
+                  name={autoCover ? 'sparkles' : 'sparkles-outline'}
+                  size={18}
+                  color={autoCover ? colors.white : colors.textMuted}
+                />
+              </TouchableOpacity>
+            </View>
+            {autoCover && (
+              <Text style={styles.autoCoverHint}>
+                A capa será buscada automaticamente ao salvar
+              </Text>
+            )}
           </Field>
 
           <Field label="Tipo">
@@ -483,5 +523,28 @@ const styles = StyleSheet.create({
     borderTopWidth: 1, borderBottomWidth: 1, borderColor: colors.border,
     textAlign: 'center', fontSize: 15, color: colors.text, lineHeight: 20,
     paddingVertical: 0,
+  },
+    coverRow: {
+    flexDirection: 'row',
+    gap: 8,
+    alignItems: 'center',
+  },
+  autoCoverBtn: {
+    width: 44, height: 44,
+    borderRadius: 8,
+    backgroundColor: colors.bgCard,
+    borderWidth: 1,
+    borderColor: colors.border,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  autoCoverBtnActive: {
+    backgroundColor: colors.pink,
+    borderColor: colors.pink,
+  },
+  autoCoverHint: {
+    fontSize: 11,
+    color: colors.textDim,
+    marginTop: 6,
   },
 });
